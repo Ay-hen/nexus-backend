@@ -63,7 +63,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health").permitAll()
                 // Temporary public routes for future authentication endpoints
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**", "/auth/otp/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(
