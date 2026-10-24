@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Document(collection = "users")
 @Getter 
-@Setter 
+@Setter  
 @AllArgsConstructor 
 @NoArgsConstructor 
 public class User {
