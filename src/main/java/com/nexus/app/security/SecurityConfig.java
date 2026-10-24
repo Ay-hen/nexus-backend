@@ -2,6 +2,7 @@ package com.nexus.app.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -60,10 +61,18 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint((request, response, authException) ->
+                    JsonErrorWriter.write(
+                        response, 401, "Unauthorized", "Authentication required"))
+            )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/health").permitAll()
-                // Temporary public routes for future authentication endpoints
-                .requestMatchers("/api/auth/**", "/auth/otp/**").permitAll()
+                .requestMatchers("/actuator/health", "/error").permitAll()
+                .requestMatchers(HttpMethod.POST,
+                    "/api/auth/register",
+                    "/api/auth/login",
+                    "/auth/otp/verify",
+                    "/auth/otp/resend").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(
